@@ -14,6 +14,8 @@ type Point struct {
 type Polygon struct {
 	// A polygon
 	Points []Point
+	bb     BoundingBox
+	hasBB  bool
 }
 
 type BoundingBox struct {
@@ -21,13 +23,16 @@ type BoundingBox struct {
 	TopRight   Point
 }
 
-func PointInPolygon(pt Point, poly Polygon) bool {
+func PointInPolygon(pt Point, poly *Polygon) bool {
 	// Checks if point is inside polygon
 
-	bb := GetBoundingBox(poly) // Get the bounding box of the polygon in question
+	if !poly.hasBB {
+		poly.bb = GetBoundingBox(*poly) // Get the bounding box of the polygon in question
+		poly.hasBB = true
+	}
 
 	// If point not in bounding box return false immediately
-	if !PointInBoundingBox(pt, bb) {
+	if !PointInBoundingBox(pt, poly.bb) {
 		return false
 	}
 
@@ -62,7 +67,7 @@ func MaxParallelism() int {
 	return numCPU
 }
 
-func PointInPolygonParallel(pts []Point, poly Polygon, numcores int) []Point {
+func PointInPolygonParallel(pts []Point, poly *Polygon, numcores int) []Point {
 
 	MAXPROCS := MaxParallelism()
 	runtime.GOMAXPROCS(MAXPROCS)
