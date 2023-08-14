@@ -120,6 +120,27 @@ func PointInBoundingBox(pt Point, bb BoundingBox) bool {
 
 }
 
+func BoundingBoxIntersects(bb1, bb2 BoundingBox) bool {
+	l1 := bb1.TopRight
+	r1 := bb1.BottomLeft
+	l2 := bb2.TopRight
+	r2 := bb2.BottomLeft
+
+	if l1.X == r1.X || l1.Y == r1.Y || r2.X == l2.X || l2.Y == r2.Y {
+		return false
+	}
+
+	if l1.X > r2.X || l2.X > r1.X {
+		return false
+	}
+
+	if r1.Y > l2.Y || r2.Y > l1.Y {
+		return false
+	}
+
+	return true
+}
+
 func GetBoundingBox(poly Polygon) BoundingBox {
 
 	var maxX, maxY, minX, minY float64
