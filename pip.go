@@ -1,6 +1,7 @@
 package pip
 
 import (
+	"math"
 	"runtime"
 	"sync"
 )
@@ -121,24 +122,19 @@ func PointInBoundingBox(pt Point, bb BoundingBox) bool {
 }
 
 func BoundingBoxIntersects(bb1, bb2 BoundingBox) bool {
-	l1 := bb1.TopRight
-	r1 := bb1.BottomLeft
-	l2 := bb2.TopRight
-	r2 := bb2.BottomLeft
+	l1 := bb1.BottomLeft
+	r1 := bb1.TopRight
 
-	if l1.X == r1.X || l1.Y == r1.Y || r2.X == l2.X || l2.Y == r2.Y {
-		return false
-	}
+	l2 := bb2.BottomLeft
+	r2 := bb2.TopRight
 
-	if l1.X > r2.X || l2.X > r1.X {
-		return false
-	}
+	x5 := math.Max(l1.X, l2.X)
+	y5 := math.Max(l1.Y, l2.Y)
 
-	if r1.Y > l2.Y || r2.Y > l1.Y {
-		return false
-	}
+	x6 := math.Min(r1.X, r2.X)
+	y6 := math.Min(r1.Y, r2.Y)
 
-	return true
+	return x5 <= x6 && y5 <= y6
 }
 
 func GetBoundingBox(poly Polygon) BoundingBox {
